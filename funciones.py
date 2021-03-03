@@ -1,35 +1,59 @@
-import os
-import sys
-import time
-#import xml.ElementTree as ET
-#from obj_matriz import *
+#from circularSimple import ListaCircular
+import os, sys, time
+
+from simple.ListaSimple import ListaSimple
+from circularSimple.ListaCircular import  ListaCircular
+
+import xml.etree.ElementTree as ET
+
+matriz = ListaCircular()
+
 
 
 def cls():
     os.system("cls")
 
+
 def cargar():
     cls()
-    try:
-        print("********* Cargar archivo *********\n")
-        datos = input("Ingrese la ruta del archivo xml: ")
-        archivo = open(datos, 'r', encoding='UTF-8')
-        lienas = archivo.readlines()
-        archivo.close()
 
-        for liena in lienas:
-            print(liena)
-            time.sleep(0.05)
-        print("\nArchivo cargado correctamente")
-        time.sleep(1)
-        cls()
+    try:
+        
+        posiciones = ListaSimple()
+        print("********* Cargar archivo *********\n")
+        datos = input("Ingrese la ruta del arxhivo xml:")
+        archivo = ET.parse(datos)
+        root = archivo.getroot()
+
+        nodo_principal = root.tag
+        if nodo_principal == "matrices":
+            for elemento in root:               
+                nombre = elemento.attrib['nombre']
+                n = elemento.attrib['n']
+                m = elemento.attrib['m']
+                for sub in elemento:
+                    x = sub.attrib['x']
+                    y = sub.attrib['y']
+                    numero = sub.text
+                    posiciones.insertar(x, y, numero)
+                p = posiciones
+                matriz.AgragarFinal(nombre, n, m, p)
+            print("Archivo cargado exitosamente")
+            input()
+        else:
+            print("\n-*-*-*-*-*-*-*-*-*ERROR-*-*-*-*-*-*-*-*-*")
+            input("El archivo que desea cargar no especifica el nodo pricipal 'matrices'....")
+        
     except:
         input("Ruta del archivo no encontrado...")
         cargar()
 
+
+    
 def procesar_archivo():
     cls()
     print("********* Procesar archivo *********\n")
+    matriz.Recorrer()
     input()
 
 def escribir_archivo():
